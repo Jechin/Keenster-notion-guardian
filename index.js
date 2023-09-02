@@ -36,7 +36,7 @@ const exportFromNotion = async (destination, format) => {
       spaceId: NOTION_SPACE_ID,
       exportOptions: {
         exportType: format,
-        timeZone: `Europe/Berlin`,
+        timeZone: `Asia/Shanghai`,
         locale: `en`,
       },
     },
