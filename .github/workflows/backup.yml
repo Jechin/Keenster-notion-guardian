@@ -48,6 +48,10 @@ jobs:
           # Move the contents of the first-level folder to the current directory
           rsync "${folder%/}"/* .
           # Remove the first-level folder
+          # echo file
+          echo "ls -l"
+          ls
+          echo "--------------------------------------"
           rm -r "${folder%/}"
           # Delete the zip file
           rm "$zip_file"
