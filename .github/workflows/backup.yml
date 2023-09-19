@@ -41,23 +41,60 @@ jobs:
           cd backup-repo
           echo "ls"
           ls
-          # Find the zip file using the wildcard
-          zip_file="$(ls *.zip | head -n1)"
-          echo "zip_file" "$zip_file"
-          # Unzip the file
-          unzip -O utf-8 -q "$zip_file"
-          # Get the top-level folder
-          folder=$(unzip -Z1 "$zip_file" | awk -F/ '{print $1}' | sort | uniq)
-          # Move the contents of the first-level folder to the current directory
-          rsync "${folder%/}"/* .
-          # Remove the first-level folder
+          # Find all ZIP files in the current directory
+          zip_files=$(ls *.zip 2>/dev/null)
+
+          # Check if any ZIP files were found
+          if [ -z "$zip_files" ]; then
+            echo "No ZIP files found in the current directory."
+            exit 1
+          fi
+
+          # Loop through each ZIP file and extract its contents
+          for zip_file in $zip_files; do
+            # Extract the ZIP file to a temporary directory
+            unzip -q -O utf-8 -d temp_dir "$zip_file"
+            
+            # Check if the extraction was successful
+            if [ $? -ne 0 ]; then
+              echo "Error: Failed to extract '$zip_file'."
+              continue
+            fi
+            
+            # Find the top-level folder in the extraction directory
+            top_level_folder=$(find temp_dir -mindepth 1 -maxdepth 1 -type d)
+            
+            # Check if a top-level folder was found
+            if [ -z "$top_level_folder" ]; then
+              echo "Error: No top-level folder found in '$zip_file'."
+              continue
+            fi
+            
+            # Move the contents of the first-level folder to the current directory
+            mv "$top_level_folder"/* .
+            
+            # Clean up the temporary directory
+            rm -r temp_dir
+            
+            echo "Extracted and removed top-level folder for '$zip_file'."
+          done
+          
+          echo "Extraction and folder removal completed successfully."
+          
+          # # Unzip the file
+          # unzip -O utf-8 -q "$zip_file"
+          # # Get the top-level folder
+          # folder=$(unzip -Z1 "$zip_file" | awk -F/ '{print $1}' | sort | uniq)
+          # # Move the contents of the first-level folder to the current directory
+          # rsync "${folder%/}"/* .
+          # # Remove the first-level folder
           # echo file
           echo "ls -l"
           ls
           echo "--------------------------------------"
-          rm -r "${folder%/}"
-          # Delete the zip file
-          rm "$zip_file"
+          # rm -r "${folder%/}"
+          # # Delete the zip file
+          # rm "$zip_file"
           git config --local user.email "${REPO_EMAIL}"
           git config --local user.name "${REPO_USERNAME}"
           git add .
