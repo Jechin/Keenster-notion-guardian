@@ -39,10 +39,13 @@ jobs:
         run: |
           cp -a workspace/. backup-repo/
           cd backup-repo
+          echo "ls"
+          ls
           # Find the zip file using the wildcard
           zip_file="$(ls *.zip | head -n1)"
+          echo "zip_file" "$zip_file"
           # Unzip the file
-          unzip -O utf-8 "$zip_file"
+          unzip -O utf-8 -q "$zip_file"
           # Get the top-level folder
           folder=$(unzip -Z1 "$zip_file" | awk -F/ '{print $1}' | sort | uniq)
           # Move the contents of the first-level folder to the current directory
