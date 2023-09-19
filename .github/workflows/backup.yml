@@ -39,18 +39,18 @@ jobs:
         run: |
           cp -a workspace/. backup-repo/
           cd backup-repo
-          # # Find the zip file using the wildcard
-          # zip_file="$(ls *.zip | head -n1)"
-          # # Unzip the file
-          # unzip "$zip_file"
-          # # Get the top-level folder
-          # folder=$(unzip -Z1 "$zip_file" | awk -F/ '{print $1}' | sort | uniq)
-          # # Move the contents of the first-level folder to the current directory
-          # rsync "${folder%/}"/* .
-          # # Remove the first-level folder
-          # rm -r "${folder%/}"
-          # # Delete the zip file
-          # rm "$zip_file"
+          # Find the zip file using the wildcard
+          zip_file="$(ls *.zip | head -n1)"
+          # Unzip the file
+          unzip -O utf-8 "$zip_file"
+          # Get the top-level folder
+          folder=$(unzip -Z1 "$zip_file" | awk -F/ '{print $1}' | sort | uniq)
+          # Move the contents of the first-level folder to the current directory
+          rsync "${folder%/}"/* .
+          # Remove the first-level folder
+          rm -r "${folder%/}"
+          # Delete the zip file
+          rm "$zip_file"
           git config --local user.email "${REPO_EMAIL}"
           git config --local user.name "${REPO_USERNAME}"
           git add .
