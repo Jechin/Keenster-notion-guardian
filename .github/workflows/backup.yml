@@ -71,7 +71,7 @@ jobs:
             fi
             
             # Move the contents of the first-level folder to the current directory
-            mv -f "$top_level_folder"/* .
+            cp -R "$top_level_folder"/* .
             
             # Clean up the temporary directory
             rm -r temp_dir
