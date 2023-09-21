@@ -75,6 +75,7 @@ jobs:
             
             # Clean up the temporary directory
             rm -r temp_dir
+            rm *.zip
             
             echo "Extracted and removed top-level folder for '$zip_file'."
           done
